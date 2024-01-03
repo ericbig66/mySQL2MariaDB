@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<body>
+<p>請選取mySQL匯出之檔案，上傳後會立即轉換成MariaDB相容之格式並下載[可另存此網頁離線使用]</p>
+<p>Please select sql file dumped by mySQL, the file will be convert to MariaDB compatible sql file instantly and download. [You may download this page for offline use]</p>
+<input type="file" id="myFile" size="50" onchange="myFunction()">
+
+<p id="demo"></p>
+
+<script>
+function myFunction(){
+    var file = document.getElementById("myFile").files[0];
+    if (file) {
+        var reader = new FileReader();
+        reader.readAsText(file, "UTF-8");
+        reader.onload = function (evt) {
+            var content = evt.target.result;
+            var newContent = content.replace(/utf8mb4_0900_ai_ci/g, 'utf8_general_ci').replace(/utf8mb4/g, 'utf8');
+            var newFilename = file.name.split('.').slice(0, -1).join('.') + "(MariaDB).sql";
+            download(newFilename, newContent);
+        }
+        reader.onerror = function (evt) {
+            document.getElementById("demo").innerHTML = "Error reading file";
+        }
+    }
+}
+
+function download(filename, text) {
+    var element = document.createElement('a');
+    element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
+    element.setAttribute('download', filename);
+    element.style.display = 'none';
+    document.body.appendChild(element);
+    element.click();
+    document.body.removeChild(element);
+}
+</script>
+
+</body>
+</html>
